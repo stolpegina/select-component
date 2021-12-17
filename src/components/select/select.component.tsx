@@ -1,73 +1,89 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useState, useRef } from "react";
+import { IData } from "../../types/types";
 
-import './select.styles.scss';
+import "./select.styles.scss";
 
 interface SelectProps {
-    test: string;
+    data: IData[];
+    handleChange: (item: {
+        id: number;
+        name: string;
+        checked: boolean;
+    }) => void;
 }
 
-interface IchangedItem {
-    id: number;
-    fruit: string;
-    checked: boolean;
-}
+const Select: FC<SelectProps> = ({ data, handleChange }) => {
+    const [search, setSearch] = useState("");
+    const [showList, setShowList] = useState(false);
 
-
-const Select: FC<SelectProps> = ({ test }) => {
-
-    const [data, setData] = useState<{ id: number, fruit: string, checked: boolean }[]>([]);
-
-    useEffect(() => {
-        fetch('http://localhost:3001/data')
-            .then(response => response.json())
-            .then(data => setData(data));
-    }, []);
-
+    const inputEl = useRef<HTMLInputElement>(null);
 
     const clearInput = (allData: any[]) => {
-        const arr = allData.map((elem) => ({ ...elem, checked: false }));
-        setData(arr);
-        console.log(arr);
-    }
+        const arr = allData.filter(elem => elem.checked);
+        arr.forEach(elem => handleChange(elem));
+    };
 
-    const handleChange = (item: { id: number, fruit: string, checked: boolean }) => {
-        console.log(item);
-        const changedItem = { ...item, checked: !item.checked };
+    const filteredItems = data.filter((item) =>
+        item.name.toLowerCase().includes(search.toLowerCase())
+    );
 
-        fetch(`http://localhost:3001/data/${item.id}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(changedItem)
-        })
-            .then(response => response.json())
-            .then(dataResp => {
-                const updatedData = data.map(el => el.id === item.id ? dataResp : el);
-                setData(updatedData);
-            });
-    }
+    const showListClass = showList ? "select__list show_list" : "select__list";
+
+    const setRef = () => {
+        if (inputEl && inputEl.current) {
+            inputEl.current.focus();
+        }
+    };
 
     return (
         <div>
             <div className="select">
-                <div className="select__input">
-                    {data.filter(item => item.checked).map(item =>
-                        <div className="select__checked-elem" key={item.id}>
-                            <span>{item.fruit}</span>
-                            <span> x</span>
-                        </div>)}
+                <div className="select__box" onClick={setRef}>
+                    {data
+                        .filter((item) => item.checked)
+                        .map((item) => (
+                            <div className="select__checked-elem" key={item.id}>
+                                <span>{item.name}</span>
+                                <span
+                                    className="remove-button"
+                                    onClick={() => {
+                                        handleChange(item);
+                                    }}
+                                > &#215;</span>
+                            </div>
+                        ))}
+                    <input
+                        className="select__input"
+                        ref={inputEl}
+                        onChange={(e) => setSearch(e.target.value)}
+                        onClick={() => setShowList(true)}
+                        onFocus={() => setShowList(true)}
+                        onBlur={() => setTimeout(() => setShowList(false), 500)}
+                    />
                 </div>
-                <span onClick={() => clearInput(data)}>X</span>
-                <br />
+                <span className="remove-button" onClick={() => clearInput(data)}>
+                    &#10006;
+                </span>
             </div>
-            <div className="select__list">
-                {data.map(item => <div key={item.id} onClick={() => {
-                    handleChange(item);
-                }}>{item.fruit}</div>)}
+            <div className={showListClass}>
+                {filteredItems.length ? (
+                    filteredItems.map((item) => (
+                        <div
+                            key={item.id}
+                            onFocus={() => setShowList(true)}
+                            onClick={() => {
+                                handleChange(item);
+                            }}
+                        >
+                            {item.name}
+                        </div>
+                    ))
+                ) : (
+                    <div>No result</div>
+                )}
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default Select;

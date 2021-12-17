@@ -2,102 +2,37 @@
   "data": [
     {
       "id": 0,
-      "fruit": "",
+      "name": "Digique",
       "checked": false
     },
     {
       "id": 1,
-      "fruit": "Avocado",
+      "name": "Tsunamia",
       "checked": false
     },
     {
       "id": 2,
-      "fruit": "Pear",
+      "name": "Orboid",
       "checked": false
     },
     {
       "id": 3,
-      "fruit": "Cherry",
+      "name": "Imkan",
       "checked": false
     },
     {
       "id": 4,
-      "fruit": "",
+      "name": "Locazone",
       "checked": false
     },
     {
       "id": 5,
-      "fruit": "Nectarine",
+      "name": "Kiosk",
       "checked": false
     },
     {
       "id": 6,
-      "fruit": "Strawberry",
-      "checked": false
-    },
-    {
-      "id": 7,
-      "fruit": "Orange",
-      "checked": false
-    },
-    {
-      "id": 8,
-      "fruit": "Pomegranate",
-      "checked": false
-    },
-    {
-      "id": 9,
-      "fruit": "Raspberry",
-      "checked": false
-    },
-    {
-      "id": 10,
-      "fruit": "Plum",
-      "checked": false
-    },
-    {
-      "id": 11,
-      "fruit": "Banana",
-      "checked": true
-    },
-    {
-      "id": 12,
-      "fruit": "Blueberry",
-      "checked": false
-    },
-    {
-      "id": 13,
-      "fruit": "Mandarin",
-      "checked": true
-    },
-    {
-      "id": 14,
-      "fruit": "Jackfruit",
-      "checked": false
-    },
-    {
-      "id": 15,
-      "fruit": "Grape",
-      "checked": false
-    },
-    {
-      "id": 16,
-      "fruit": "Kiwi",
-      "checked": false
-    },
-    {
-      "id": 17,
-      "fruit": "Papaya",
-      "checked": false
-    },
-    {
-      "id": 18,
-      "fruit": "Apple",
-      "checked": false
-    },
-    {
-      "id": 19,
-      "fruit": "Pineapple",
+      "name": "Magnina",
       "checked": false
     }
   ]
