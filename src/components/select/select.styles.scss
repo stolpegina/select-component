@@ -127,3 +127,44 @@ html {
   border: none;
   outline: none;
 }
+
+.select__arrow{
+  position: absolute;
+  right: 12px;
+  height: 10px;
+  width: 10px;
+  cursor: pointer;
+}
+
+.select__checked-item{
+  background-color: var(--group-background);
+}
+
+.search__animation{
+  z-index: 1000;
+  position: absolute;
+  left: 35%;
+  top: -10%;
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+  &:after {
+    content: " ";
+    display: block;
+    width: 45px;
+    height: 45px;
+    margin: 8px;
+    border-radius: 50%;
+    border: 6px solid var(--input-border-focus);
+    border-color: var(--group-background-focus) transparent var(--group-background-focus) transparent;
+    animation: search__animation 1.2s linear infinite;
+  }
+}
+@keyframes search__animation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

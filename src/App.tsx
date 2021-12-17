@@ -6,6 +6,7 @@ import { IData } from './types/types';
 const App = () => {
 
   const [data, setData] = useState<IData[]>([]);
+  const [searchResult, setSearchResult] = useState();
 
   useEffect(() => {
     fetch("http://localhost:3001/data")
@@ -38,9 +39,16 @@ const App = () => {
       .catch((e) => console.log(e));
   };
 
+  const searchByName = (query: string) => {
+    return fetch(`http://localhost:3001/data?q=${query}`, {
+      method: "GET"
+    }).then(response => response.json())
+      .catch(error => setSearchResult(error));
+  }
+
   return (
     <div className="App">
-      <Select data={data} handleChange={(item) => handleChange(item)} />
+      <Select data={data} handleChange={handleChange} searchByName={searchByName} searchResult={searchResult} />
     </div>
   );
 }

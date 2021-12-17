@@ -8,12 +8,12 @@
     {
       "id": 1,
       "name": "Tsunamia",
-      "checked": false
+      "checked": true
     },
     {
       "id": 2,
       "name": "Orboid",
-      "checked": false
+      "checked": true
     },
     {
       "id": 3,

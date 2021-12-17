@@ -1,5 +1,6 @@
-import React, { FC, useState, useRef } from "react";
+import React, { FC, useState, useRef, useEffect } from "react";
 import { IData } from "../../types/types";
+import useDebounce from "../../use-debounce";
 
 import "./select.styles.scss";
 
@@ -10,24 +11,40 @@ interface SelectProps {
         name: string;
         checked: boolean;
     }) => void;
+    searchByName: (search: string) => any;
+    searchResult: any;
 }
 
-const Select: FC<SelectProps> = ({ data, handleChange }) => {
+const Select: FC<SelectProps> = ({ data, handleChange, searchByName, searchResult }) => {
     const [search, setSearch] = useState("");
     const [showList, setShowList] = useState(false);
 
+    const [isSearching, setIsSearching] = useState(false);
+    const [results, setResults] = useState([]);
+
     const inputEl = useRef<HTMLInputElement>(null);
+
+    const debouncedSearchTerm = useDebounce(search, 2000);
+
+    useEffect(
+        () => {
+            if (debouncedSearchTerm) {
+                setIsSearching(true);
+                searchByName(debouncedSearchTerm).then((result: React.SetStateAction<never[]>) => {
+                    setIsSearching(false);
+                    setResults(result);
+                });
+            } else {
+                setResults([]);
+            }
+        },
+        [debouncedSearchTerm]
+    )
 
     const clearInput = (allData: any[]) => {
         const arr = allData.filter(elem => elem.checked);
         arr.forEach(elem => handleChange(elem));
     };
-
-    const filteredItems = data.filter((item) =>
-        item.name.toLowerCase().includes(search.toLowerCase())
-    );
-
-    const showListClass = showList ? "select__list show_list" : "select__list";
 
     const setRef = () => {
         if (inputEl && inputEl.current) {
@@ -35,9 +52,17 @@ const Select: FC<SelectProps> = ({ data, handleChange }) => {
         }
     };
 
+    const getSearchResult = () => {
+        const filteredItems = data.filter((item) =>
+            item.name.toLowerCase().includes(search.toLowerCase())
+        );
+        return results.length ? results : filteredItems;
+    }
+
     return (
         <div>
             <div className="select">
+                {isSearching && <div className="search__animation"></div>}
                 <div className="select__box" onClick={setRef}>
                     {data
                         .filter((item) => item.checked)
@@ -60,15 +85,21 @@ const Select: FC<SelectProps> = ({ data, handleChange }) => {
                         onFocus={() => setShowList(true)}
                         onBlur={() => setTimeout(() => setShowList(false), 500)}
                     />
+                    <span
+                        className="select__arrow"
+                        onClick={() => setShowList(!showList)}>
+                        &#8744;
+                    </span>
                 </div>
                 <span className="remove-button" onClick={() => clearInput(data)}>
                     &#10006;
                 </span>
             </div>
-            <div className={showListClass}>
-                {filteredItems.length ? (
-                    filteredItems.map((item) => (
+            <div className={showList ? "select__list show_list" : "select__list"}>
+                {getSearchResult().length ? (
+                    getSearchResult().map((item) => (
                         <div
+                            className={item.checked ? 'select__checked-item' : ''}
                             key={item.id}
                             onFocus={() => setShowList(true)}
                             onClick={() => {
