@@ -1,84 +1,96 @@
-import React, { FC, useState, useRef, useEffect } from "react";
+import React, { FC, useState, useRef, useEffect, useMemo } from "react";
 import { IData } from "../../types/types";
 import useDebounce from "../../use-debounce";
 
 import "./select.styles.scss";
 
+import { ReactComponent as CloseSvg } from '../../images/icons/close_icon.svg';
+import { ReactComponent as DownArrowSvg } from '../../images/icons/down_arrow_icon.svg';
+
 interface SelectProps {
     data: IData[];
-    handleChange: (item: {
-        id: number;
-        name: string;
-        checked: boolean;
-    }) => void;
-    searchByName: (search: string) => any;
-    searchResult: any;
+    handleChange: (item: IData | IData[]) => void;
+    searchByName: (search: string) => Promise<IData[]>;
+    modeOne?: boolean;
 }
 
-const Select: FC<SelectProps> = ({ data, handleChange, searchByName, searchResult }) => {
+const Select: FC<SelectProps> = ({ data, handleChange, searchByName, modeOne }) => {
     const [search, setSearch] = useState("");
     const [showList, setShowList] = useState(false);
 
     const [isSearching, setIsSearching] = useState(false);
-    const [results, setResults] = useState([]);
+    const [results, setResults] = useState<IData[]>([]);
+
+    const searchResult = useMemo(() => {
+        if (results.length) return results;
+
+        const filteredItems = data.filter((item) =>
+            item.name.toLowerCase().includes(search.toLowerCase())
+        );
+        return filteredItems;
+    }, [results, data, search]);
 
     const inputEl = useRef<HTMLInputElement>(null);
+
+    const selectedItems = useMemo(() => data.filter(item => item.checked), [data]);
 
     const debouncedSearchTerm = useDebounce(search, 2000);
 
     useEffect(
         () => {
-            if (debouncedSearchTerm) {
-                setIsSearching(true);
-                searchByName(debouncedSearchTerm).then((result: React.SetStateAction<never[]>) => {
-                    setIsSearching(false);
-                    setResults(result);
-                });
-            } else {
-                setResults([]);
+            if (!debouncedSearchTerm) {
+                return setResults([]);
             }
+
+            setIsSearching(true);
+            searchByName(debouncedSearchTerm).then((result) => {
+                setIsSearching(false);
+                setResults(result);
+            });
         },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [debouncedSearchTerm]
     )
 
-    const clearInput = (allData: any[]) => {
-        const arr = allData.filter(elem => elem.checked);
-        arr.forEach(elem => handleChange(elem));
+    const clearInput = () => {
+        const arr = selectedItems.map(item => ({ ...item, checked: false }));
+        handleChange(arr)
     };
 
-    const setRef = () => {
-        if (inputEl && inputEl.current) {
-            inputEl.current.focus();
+    const onChange = (item: IData) => {
+        const updatedItem = { ...item, checked: !item.checked }
+
+        if (!modeOne) {
+            return handleChange(updatedItem);
         }
-    };
 
-    const getSearchResult = () => {
-        const filteredItems = data.filter((item) =>
-            item.name.toLowerCase().includes(search.toLowerCase())
-        );
-        return results.length ? results : filteredItems;
+        const uncheckedItems = selectedItems
+            .filter(({ id }) => id !== item.id)
+            .map(item => ({ ...item, checked: false }))
+        return handleChange([updatedItem, ...uncheckedItems]);
     }
 
+    const setInputFocus = () => {
+        inputEl.current?.focus();
+    };
+
     return (
-        <div>
-            <div className="select">
-                {isSearching && <div className="search__animation"></div>}
-                <div className="select__box" onClick={setRef}>
-                    {data
-                        .filter((item) => item.checked)
+        <div className="select-block">
+            <div className="select-block__container">
+                {isSearching && <div className="select-block__search_animation"></div>}
+                <div className="select-block__box" onClick={setInputFocus}>
+                    {selectedItems
                         .map((item) => (
-                            <div className="select__checked-elem" key={item.id}>
+                            <div className="select-block_checked" key={item.id}>
                                 <span>{item.name}</span>
                                 <span
-                                    className="remove-button"
-                                    onClick={() => {
-                                        handleChange(item);
-                                    }}
-                                > &#215;</span>
+                                    className="select-block__remove-button"
+                                    onClick={() => onChange(item)}
+                                > <CloseSvg /></span>
                             </div>
                         ))}
                     <input
-                        className="select__input"
+                        className="select-block__input"
                         ref={inputEl}
                         onChange={(e) => setSearch(e.target.value)}
                         onClick={() => setShowList(true)}
@@ -86,25 +98,23 @@ const Select: FC<SelectProps> = ({ data, handleChange, searchByName, searchResul
                         onBlur={() => setTimeout(() => setShowList(false), 500)}
                     />
                     <span
-                        className="select__arrow"
+                        className="select-block__arrow"
                         onClick={() => setShowList(!showList)}>
-                        &#8744;
+                        <DownArrowSvg />
                     </span>
                 </div>
-                <span className="remove-button" onClick={() => clearInput(data)}>
-                    &#10006;
+                <span className="select-block__remove-button" onClick={() => clearInput()}>
+                    <CloseSvg />
                 </span>
             </div>
-            <div className={showList ? "select__list show_list" : "select__list"}>
-                {getSearchResult().length ? (
-                    getSearchResult().map((item) => (
+            <div className={showList ? "select-block__dropdown select-block__dropdown_show" : "select-block__dropdown"}>
+                {searchResult.length ? (
+                    searchResult.map((item) => (
                         <div
-                            className={item.checked ? 'select__checked-item' : ''}
+                            className={item.checked ? 'select-block_checked' : ''}
                             key={item.id}
                             onFocus={() => setShowList(true)}
-                            onClick={() => {
-                                handleChange(item);
-                            }}
+                            onClick={() => onChange(item)}
                         >
                             {item.name}
                         </div>

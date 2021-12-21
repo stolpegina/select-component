@@ -23,7 +23,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "server": "node ./node_modules/json-server/lib/cli/bin.js --watch db.json --port 3001",
+    "server": "node ./node_modules/json-server/lib/cli/bin.js db.json --port 3001",
     "client": "react-scripts start"
   },
   "eslintConfig": {
@@ -43,5 +43,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "stylelint": "^14.1.0",
+    "stylelint-config-standard-scss": "^3.0.0"
   }
 }
