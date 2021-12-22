@@ -16,17 +16,6 @@ $group-background-focus: #678efe;
   width: 50%;
   box-sizing: border-box;
 
-  .select-block__box {
-    display: flex;
-    flex-wrap: wrap;
-    position: relative;
-    z-index: 1;
-    flex: 1 1 auto;
-    width: 1%;
-    margin-top: 0;
-    margin-bottom: 0;
-  }
-
   & > span {
     text-align: center;
     padding: 8px 12px;
@@ -36,14 +25,6 @@ $group-background-focus: #678efe;
     background: $group-background;
     border: 1px solid $group-border;
     transition: background 0.3s ease, border 0.3s ease, color 0.3s ease;
-  }
-
-  & > span,
-  .select-block__box {
-
-    &:not(:first-child) {
-      margin-left: -1px;
-    }
   }
 
   &:focus-within {
@@ -56,6 +37,7 @@ $group-background-focus: #678efe;
 
   .select-block__box {
     display: block;
+    position: relative;
     width: 100%;
     padding: 8px 16px;
     line-height: 25px;
@@ -102,6 +84,11 @@ $group-background-focus: #678efe;
   &.select-block__dropdown_show {
     display: block;
   }
+
+  .select-block_checked {
+    background-color: $group-background;
+  }
+
 }
 
 .select-block__input {
@@ -116,14 +103,10 @@ $group-background-focus: #678efe;
 .select-block__arrow {
   position: absolute;
   top: 10px;
-  right: 12px;
+  right: 16px;
   height: 10px;
   width: 10px;
   cursor: pointer;
-}
-
-.select-block_checked {
-  background-color: $group-background;
 }
 
 .select-block__search_animation {
@@ -159,8 +142,8 @@ $group-background-focus: #678efe;
 }
 
 .select-block__remove-button svg {
-    width: 10px;
-    height: 10px;
-    vertical-align: middle;
-    cursor: pointer;
+  width: 10px;
+  height: 10px;
+  vertical-align: middle;
+  cursor: pointer;
 }

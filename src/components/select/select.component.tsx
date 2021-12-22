@@ -14,6 +14,18 @@ interface SelectProps {
     modeOne?: boolean;
 }
 
+/**
+ * This is Select component. This component allows you to select values from a dropdown list.
+ * It supports two options - multi value and single value.
+ * The multilevel option is used by default. 
+ * In order to enable the single value option add "modeOne" as property.
+ *
+ * @param {Object} data
+ * @param {function} handleChange
+ * @param {function} searchByName
+ * @param {boolean} modeOne
+ */
+
 const Select: FC<SelectProps> = ({ data, handleChange, searchByName, modeOne }) => {
     const [search, setSearch] = useState("");
     const [showList, setShowList] = useState(false);

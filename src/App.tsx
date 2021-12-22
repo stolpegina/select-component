@@ -37,7 +37,6 @@ const App = () => {
         data={data}
         handleChange={handleChange}
         searchByName={searchByName}
-        modeOne
       />
     </div>
   );

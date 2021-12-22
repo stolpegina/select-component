@@ -24,7 +24,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "server": "node ./node_modules/json-server/lib/cli/bin.js db.json --port 3001",
-    "client": "react-scripts start"
+    "client": "react-scripts start",
+    "stylelint": "node node_modules/stylelint/bin/stylelint.js \"**/*.scss\""
   },
   "eslintConfig": {
     "extends": [
